@@ -1,0 +1,240 @@
+{
+  "autoname": "field:sku",
+  "creation": "2026-08-05 00:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "sku",
+    "title",
+    "listing_id",
+    "fsn",
+    "product",
+    "column_break_ident",
+    "listing_status",
+    "archived_status",
+    "fulfillment_profile",
+    "offer_section",
+    "mrp",
+    "selling_price",
+    "currency",
+    "column_break_offer",
+    "mop",
+    "nlc",
+    "dealer_price",
+    "tax_section",
+    "hsn",
+    "tax_code",
+    "goods_services_rate",
+    "column_break_tax",
+    "is_gst_sellable",
+    "luxury_cess_percentage",
+    "locations_section",
+    "locations",
+    "sync_section",
+    "last_synced_at",
+    "raw_summary"
+  ],
+  "fields": [
+    {
+      "description": "Seller SKU — the identifier we control, used as the document name (same pattern as Amazon Listing's autoname on sku).",
+      "fieldname": "sku",
+      "fieldtype": "Data",
+      "in_list_view": 1,
+      "label": "SKU",
+      "reqd": 1,
+      "unique": 1
+    },
+    {
+      "fieldname": "title",
+      "fieldtype": "Small Text",
+      "in_list_view": 1,
+      "label": "Title"
+    },
+    {
+      "description": "Flipkart's listing identifier (Flipkart-assigned, distinct from our SKU).",
+      "fieldname": "listing_id",
+      "fieldtype": "Data",
+      "in_list_view": 1,
+      "label": "Listing ID"
+    },
+    {
+      "description": "Stored from the API's 'product_id' field. Flipkart's docs describe listing search as returning \"FSN and SKU\" but never name a literal 'fsn' field in any response schema -- product_id is the most likely candidate (FSN = product-level id, distinct from the per-seller listing_id) but this equivalence is NOT explicitly confirmed by Flipkart's docs. Treat as provisional until confirmed.",
+      "fieldname": "fsn",
+      "fieldtype": "Data",
+      "in_list_view": 1,
+      "label": "FSN (from product_id, unconfirmed)"
+    },
+    {
+      "description": "Optional link to the corresponding Alaiy OS Item. Never auto-set by the pull import (same as Amazon Listing) -- a listing stands alone until explicitly linked.",
+      "fieldname": "product",
+      "fieldtype": "Link",
+      "label": "Product (Item)",
+      "options": "Item"
+    },
+    {
+      "fieldname": "column_break_ident",
+      "fieldtype": "Column Break"
+    },
+    {
+      "default": "INACTIVE",
+      "fieldname": "listing_status",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "label": "Listing Status",
+      "options": "ACTIVE\nINACTIVE"
+    },
+    {
+      "default": "NONE",
+      "fieldname": "archived_status",
+      "fieldtype": "Select",
+      "label": "Archived Status",
+      "options": "NONE\nARCHIVED"
+    },
+    {
+      "fieldname": "fulfillment_profile",
+      "fieldtype": "Select",
+      "label": "Fulfillment Profile",
+      "options": "\nNON_FBF\nFBF_LITE\nFBF"
+    },
+    {
+      "fieldname": "offer_section",
+      "fieldtype": "Section Break",
+      "label": "Offer"
+    },
+    {
+      "fieldname": "mrp",
+      "fieldtype": "Currency",
+      "label": "MRP",
+      "options": "currency"
+    },
+    {
+      "fieldname": "selling_price",
+      "fieldtype": "Currency",
+      "in_list_view": 1,
+      "label": "Selling Price",
+      "options": "currency"
+    },
+    {
+      "description": "ISO 4217 currency code, as returned by Flipkart's price.currency field.",
+      "fieldname": "currency",
+      "fieldtype": "Data",
+      "label": "Currency"
+    },
+    {
+      "fieldname": "column_break_offer",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "mop",
+      "fieldtype": "Currency",
+      "label": "MOP",
+      "options": "currency"
+    },
+    {
+      "fieldname": "nlc",
+      "fieldtype": "Currency",
+      "label": "NLC",
+      "options": "currency"
+    },
+    {
+      "fieldname": "dealer_price",
+      "fieldtype": "Currency",
+      "label": "Dealer Price",
+      "options": "currency"
+    },
+    {
+      "fieldname": "tax_section",
+      "fieldtype": "Section Break",
+      "label": "Tax"
+    },
+    {
+      "fieldname": "hsn",
+      "fieldtype": "Data",
+      "label": "HSN"
+    },
+    {
+      "fieldname": "tax_code",
+      "fieldtype": "Data",
+      "label": "Tax Code"
+    },
+    {
+      "fieldname": "goods_services_rate",
+      "fieldtype": "Float",
+      "label": "GST Rate (%)"
+    },
+    {
+      "fieldname": "column_break_tax",
+      "fieldtype": "Column Break"
+    },
+    {
+      "default": "0",
+      "fieldname": "is_gst_sellable",
+      "fieldtype": "Check",
+      "label": "GST Sellable"
+    },
+    {
+      "fieldname": "luxury_cess_percentage",
+      "fieldtype": "Float",
+      "label": "Luxury Cess (%)"
+    },
+    {
+      "fieldname": "locations_section",
+      "fieldtype": "Section Break",
+      "label": "Locations / Inventory"
+    },
+    {
+      "description": "Per-warehouse status and inventory, from the listing's locations[] array.",
+      "fieldname": "locations",
+      "fieldtype": "Table",
+      "label": "Locations",
+      "options": "Flipkart Listing Location"
+    },
+    {
+      "fieldname": "sync_section",
+      "fieldtype": "Section Break",
+      "label": "Sync"
+    },
+    {
+      "fieldname": "last_synced_at",
+      "fieldtype": "Datetime",
+      "label": "Last Synced At",
+      "read_only": 1
+    },
+    {
+      "description": "Raw listing detail response from the last pull, verbatim, for fields not yet modeled as their own doctype field.",
+      "fieldname": "raw_summary",
+      "fieldtype": "Code",
+      "label": "Raw Summary (JSON)",
+      "options": "JSON",
+      "read_only": 1
+    }
+  ],
+  "is_single": 0,
+  "links": [],
+  "modified": "2026-08-05 00:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "Alaiy Os Connector Flipkart",
+  "name": "Flipkart Listing",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": [],
+  "title_field": "title",
+  "track_changes": 1
+}

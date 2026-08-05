@@ -2,14 +2,9 @@
 # For license information, please see license.txt
 """
 The actual sync work + the Flipkart Sync Log lifecycle helpers every sync
-shares. run_pull_sync / run_push_sync are the two example jobs; replace their
-bodies with real logic but keep the log-create → running → success/failed
-bookkeeping so the connector card and Logs list stay accurate.
-
-Deliberately still stubs: this pass only wires up authentication (OAuth2
-client_credentials in flipkart/client.py, webhook signature verification in
-flipkart/webhooks.py) and the settings/log doctypes. Listing pull, order
-pull, and price/inventory push are separate work, not started yet.
+shares. Listing pull is real (delegates to flipkart/listings.py, which
+manages its own log lifecycle since it needs to save progress incrementally
+across paginated batches); run_push_sync and order pull are still stubs.
 """
 
 import frappe
@@ -66,15 +61,12 @@ def _run(sync_type, trigger, log_name, worker):
 
 
 def run_pull_sync(trigger="scheduled", log_name=None):
-    """Pull listings/orders from Flipkart into Alaiy OS. TODO: implement."""
-    def worker(log):
-        # from alaiy_os_connector_flipkart.flipkart.client import FlipkartClient
-        # client = FlipkartClient()
-        # data = client.get("...")
-        # ... upsert into ERPNext, updating log counters as you go ...
-        pass
-
-    _run("pull", trigger, log_name, worker)
+    """
+    Pull listings from Flipkart into Alaiy OS (Flipkart Listing records).
+    Order pull is separate, not implemented yet.
+    """
+    from alaiy_os_connector_flipkart.flipkart.listings import pull_all_listings
+    pull_all_listings(trigger=trigger, log_name=log_name)
 
 
 def run_push_sync(trigger="scheduled", log_name=None):
