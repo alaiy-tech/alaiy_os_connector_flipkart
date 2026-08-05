@@ -8,7 +8,7 @@ Flipkart's Client Credentials flow (the one that applies here — a registered
 seller integrating for their own orders/listings, not a third-party
 aggregator using the Authorization Code flow):
 
-  GET {base_url}/oauth-service/oauth/token?grant_type=client_credentials&scope=Seller_Api,Default
+  GET {base_url}/oauth-service/oauth/token?grant_type=client_credentials&scope=Seller_Api
   Authorization: Basic base64(app_id:app_secret)
 
   -> {"access_token": "...", "token_type": "bearer", "expires_in": <seconds>, "scope": "..."}
@@ -29,7 +29,10 @@ PRODUCTION_BASE_URL = "https://api.flipkart.net"
 SANDBOX_BASE_URL = "https://sandbox-api.flipkart.net"
 
 TOKEN_PATH = "/oauth-service/oauth/token"
-TOKEN_SCOPE = "Seller_Api,Default"
+# Confirmed live against production: "Seller_Api,Default" is rejected with
+# invalid_scope ("Invalid scope: Default") -- only the bare scope from the
+# docs' own curl example works.
+TOKEN_SCOPE = "Seller_Api"
 
 # Refresh this many seconds before the token's real expiry, so a call in
 # flight never gets caught using a token that expires mid-request.
