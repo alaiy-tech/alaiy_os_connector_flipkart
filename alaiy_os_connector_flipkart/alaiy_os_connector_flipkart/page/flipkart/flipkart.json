@@ -1,0 +1,11 @@
+{
+  "doctype": "Page",
+  "module": "Alaiy Os Connector Flipkart",
+  "name": "flipkart",
+  "page_name": "flipkart",
+  "standard": "Yes",
+  "system_page": 0,
+  "title": "Flipkart",
+  "icon": "box",
+  "roles": []
+}

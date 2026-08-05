@@ -113,3 +113,10 @@ class FlipkartClient:
         )
         resp.raise_for_status()
         return resp.json()
+
+    def get_absolute(self, url, timeout=30):
+        """For pagination cursors Flipkart returns as a full URL (e.g.
+        shipments/filter's nextPageUrl) rather than a page token."""
+        resp = requests.get(url, headers=self._headers(), timeout=timeout)
+        resp.raise_for_status()
+        return resp.json()

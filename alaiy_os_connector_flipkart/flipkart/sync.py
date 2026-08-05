@@ -2,9 +2,10 @@
 # For license information, please see license.txt
 """
 The actual sync work + the Flipkart Sync Log lifecycle helpers every sync
-shares. Listing pull is real (delegates to flipkart/listings.py, which
-manages its own log lifecycle since it needs to save progress incrementally
-across paginated batches); run_push_sync and order pull are still stubs.
+shares. Listing pull and order pull are both real (delegate to
+flipkart/listings.py and flipkart/orders.py respectively, each managing its
+own log lifecycle since they save progress incrementally across paginated
+batches); run_push_sync is still a stub.
 """
 
 import frappe
@@ -63,10 +64,18 @@ def _run(sync_type, trigger, log_name, worker):
 def run_pull_sync(trigger="scheduled", log_name=None):
     """
     Pull listings from Flipkart into Alaiy OS (Flipkart Listing records).
-    Order pull is separate, not implemented yet.
+    Order pull runs separately (see run_order_pull) -- it has its own log
+    (sync_type="order_pull") since it's a materially different import with
+    its own progress counters, same as listings has its own.
     """
     from alaiy_os_connector_flipkart.flipkart.listings import pull_all_listings
     pull_all_listings(trigger=trigger, log_name=log_name)
+
+
+def run_order_pull(trigger="scheduled", log_name=None):
+    """Pull preDispatch shipments from Flipkart into Sales Order."""
+    from alaiy_os_connector_flipkart.flipkart.orders import pull_orders
+    pull_orders(trigger=trigger, log_name=log_name)
 
 
 def run_push_sync(trigger="scheduled", log_name=None):
