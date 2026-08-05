@@ -94,13 +94,21 @@ def _fix_settings_as_single():
     """
     Force issingle=1 on the settings doctype. Frappe does not auto-convert an
     existing DocType from table-based to Single via bench migrate, so patch it
-    directly every deploy.
+    directly every deploy. Same pattern as the Shopify connector's own
+    setup/install.py:_fix_settings_as_single().
+
+    frappe.db.sql() writes straight to the DB and does not clear Frappe's
+    cached DocType meta -- confirmed live (issingle=1 in the DB, but
+    frappe.get_doc() still raised DoesNotExistError until the meta cache
+    was cleared). clear_cache(doctype=...) is required after a raw SQL
+    change to tabDocType, same as the ORM does automatically on doc.save().
     """
     frappe.db.sql(
         "UPDATE `tabDocType` SET issingle=1 "
         "WHERE name='Flipkart Connector Settings' AND issingle=0"
     )
     frappe.db.commit()
+    frappe.clear_cache(doctype="Flipkart Connector Settings")
 
 
 # ---------------------------------------------------------------------------
