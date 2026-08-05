@@ -138,10 +138,11 @@ def setup_custom_fields():
 
     _ensure_custom_fields("Item", item_fields)
 
-    # flipkart_shipment_id is the dedup key for order import (not built yet --
-    # order/shipment API shape still needs the same docs-verification pass
-    # listings got before real sync logic is written). Added now so the field
-    # exists ahead of that work, same as Unicommerce's order-code fields.
+    # flipkart_shipment_id is the dedup key for order import/webhooks.
+    # flipkart_shipment_status is written by both the order pull and the
+    # webhook receiver (packed/ready_to_dispatch/shipped/delivered/cancelled)
+    # -- same field, two writers, since either one may see a given state
+    # change first depending on whether polling or the webhook fires sooner.
     sales_order_fields = [
         {
             "fieldname": "flipkart_shipment_id",
@@ -151,6 +152,15 @@ def setup_custom_fields():
             "search_index": 1,
             "insert_after": "title",
             "description": "Flipkart's shipment identifier for this order — used to avoid re-importing the same order twice.",
+        },
+        {
+            "fieldname": "flipkart_shipment_status",
+            "label": "Flipkart Shipment Status",
+            "fieldtype": "Data",
+            "read_only": 1,
+            "in_list_view": 1,
+            "insert_after": "flipkart_shipment_id",
+            "description": "Latest shipment state from Flipkart (APPROVED/PACKED/READY_TO_DISPATCH/SHIPPED/DELIVERED/CANCELLED), updated by order notifications.",
         },
     ]
     _ensure_custom_fields("Sales Order", sales_order_fields)
