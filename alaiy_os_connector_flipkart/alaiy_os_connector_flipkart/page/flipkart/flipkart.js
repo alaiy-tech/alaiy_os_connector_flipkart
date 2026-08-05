@@ -52,42 +52,22 @@ frappe.pages["flipkart"].on_page_load = function (wrapper) {
 							<i class="fa fa-cloud-download"></i> Import Orders from Flipkart
 						</button>
 						<div id="orders-log" class="flipkart-sync-log"></div>
-
-						<div class="flipkart-sync-box" style="margin-top:16px;">
-							<h6><i class="fa fa-wrench"></i> Shipment actions</h6>
-							<p class="flipkart-text-muted">Act on shipment/order-item ids directly (comma-separated). Only Standard Fulfilment's dispatch/cancel calls are wired up -- label generation and Self-Ship's separate flow are not implemented yet.</p>
-							<div class="flipkart-field-group" style="margin-bottom:10px;">
-								<label>Shipment IDs (mark Ready to Dispatch)</label>
-								<input type="text" id="dispatch-shipment-ids" class="flipkart-input" placeholder="e.g. SHIP-123, SHIP-456" style="width:100%;">
-							</div>
-							<button id="dispatch-shipments-btn" class="flipkart-btn flipkart-btn-outline-primary">
-								<i class="fa fa-check"></i> Mark Ready to Dispatch
-							</button>
-							<div class="flipkart-field-group" style="margin:14px 0 10px;">
-								<label>Order Item IDs (cancel)</label>
-								<input type="text" id="cancel-order-item-ids" class="flipkart-input" placeholder="e.g. OI-123, OI-456" style="width:100%;">
-							</div>
-							<button id="cancel-shipment-btn" class="flipkart-btn flipkart-btn-danger">
-								<i class="fa fa-ban"></i> Cancel Order Items
-							</button>
-							<div id="shipment-action-log" class="flipkart-sync-log"></div>
-						</div>
 					</div>
 				</div>
 
-				<!-- Listings -->
+				<!-- Products & Listings -->
 				<div class="flipkart-card">
 					<div class="flipkart-card-header">
 						<span class="flipkart-icon-badge"><i class="fa fa-cubes"></i></span>
 						<div class="flipkart-card-header-text">
-							<h5>Listings</h5>
-							<p>Pull existing Flipkart listings (price, tax, stock per location).</p>
+							<h5>Products &amp; Listings</h5>
+							<p>Pull Flipkart's listings in as Items, with each channel listing (price, tax, stock per location) linked to its Item.</p>
 						</div>
 					</div>
 					<div class="flipkart-card-body">
 						<p class="flipkart-text-muted">Import-only for now -- pushing price/inventory updates back to Flipkart is not implemented yet.</p>
-						<button id="import-listings-btn" class="flipkart-btn flipkart-btn-primary">
-							<i class="fa fa-cloud-download"></i> Import Listings from Flipkart
+						<button id="import-products-btn" class="flipkart-btn flipkart-btn-primary">
+							<i class="fa fa-cloud-download"></i> Import Products from Flipkart
 						</button>
 						<button id="manage-listings-btn" class="flipkart-btn flipkart-btn-outline-primary">
 							Manage Listings
@@ -197,59 +177,13 @@ frappe.pages["flipkart"].on_page_load = function (wrapper) {
 		);
 	}
 
-	function import_listings() {
+	function import_products() {
 		run_job(
 			'alaiy_os_connector_flipkart.api.sync.trigger_pull_sync',
 			{},
 			document.getElementById('listings-log'),
-			document.getElementById('import-listings-btn')
+			document.getElementById('import-products-btn')
 		);
-	}
-
-	function dispatch_shipments() {
-		var ids = document.getElementById('dispatch-shipment-ids').value;
-		if (!ids.trim()) { frappe.msgprint('Enter at least one shipment id.'); return; }
-		var btn = document.getElementById('dispatch-shipments-btn');
-		var log_container = document.getElementById('shipment-action-log');
-		btn.disabled = true;
-		log_container.classList.add('flipkart-active');
-		log_container.innerHTML = '<div class="flipkart-log-status-running">Marking ready to dispatch...<span class="flipkart-spinner"></span></div>';
-		frappe.call({
-			method: 'alaiy_os_connector_flipkart.api.sync.mark_shipments_ready_to_dispatch',
-			args: { shipment_ids: ids },
-			callback: function(r) {
-				btn.disabled = false;
-				log_container.innerHTML = '<div class="flipkart-log-entry">' + JSON.stringify(r.message) + '</div>';
-			},
-			error: function() {
-				btn.disabled = false;
-				log_container.innerHTML = '<div class="flipkart-log-entry flipkart-alert-warning">Request failed -- see Error Log.</div>';
-			}
-		});
-	}
-
-	function cancel_shipment_items() {
-		var ids = document.getElementById('cancel-order-item-ids').value;
-		if (!ids.trim()) { frappe.msgprint('Enter at least one order item id.'); return; }
-		frappe.confirm('Cancel these order item(s) on Flipkart? This cannot be undone.', function() {
-			var btn = document.getElementById('cancel-shipment-btn');
-			var log_container = document.getElementById('shipment-action-log');
-			btn.disabled = true;
-			log_container.classList.add('flipkart-active');
-			log_container.innerHTML = '<div class="flipkart-log-status-running">Cancelling...<span class="flipkart-spinner"></span></div>';
-			frappe.call({
-				method: 'alaiy_os_connector_flipkart.api.sync.cancel_shipment',
-				args: { order_item_ids: ids },
-				callback: function(r) {
-					btn.disabled = false;
-					log_container.innerHTML = '<div class="flipkart-log-entry">' + JSON.stringify(r.message) + '</div>';
-				},
-				error: function() {
-					btn.disabled = false;
-					log_container.innerHTML = '<div class="flipkart-log-entry flipkart-alert-warning">Request failed -- see Error Log.</div>';
-				}
-			});
-		});
 	}
 
 	function escape_html(value) {
@@ -339,9 +273,7 @@ frappe.pages["flipkart"].on_page_load = function (wrapper) {
 	refresh_logs();
 
 	document.getElementById('import-orders-btn').addEventListener('click', import_orders);
-	document.getElementById('import-listings-btn').addEventListener('click', import_listings);
-	document.getElementById('dispatch-shipments-btn').addEventListener('click', dispatch_shipments);
-	document.getElementById('cancel-shipment-btn').addEventListener('click', cancel_shipment_items);
+	document.getElementById('import-products-btn').addEventListener('click', import_products);
 	document.getElementById('manage-listings-btn').addEventListener('click', function() {
 		frappe.set_route('List', 'Flipkart Listing');
 	});

@@ -66,7 +66,7 @@
       "label": "FSN"
     },
     {
-      "description": "Optional link to the corresponding Alaiy OS Item. Never auto-set by the pull import (same as Amazon Listing) -- a listing stands alone until explicitly linked.",
+      "description": "The Alaiy OS Item this listing belongs to. Auto-created and auto-linked by the product import (item_code = SKU) -- Flipkart Listing is the per-channel record, Item is the catalog record, same relationship as Shopify Product Listing to Item.",
       "fieldname": "product",
       "fieldtype": "Link",
       "label": "Product (Item)",

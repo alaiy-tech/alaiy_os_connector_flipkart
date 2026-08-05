@@ -1,11 +1,12 @@
 # Copyright (c) 2026, Alaiy and contributors
 # For license information, please see license.txt
 """
-Product/listing IMPORT: pull Flipkart's existing listings into Alaiy OS as
-`Flipkart Listing` records (mirrors the Amazon SP-API connector's
-`Amazon Listing` pattern -- a marketplace listing stands on its own, with an
-OPTIONAL, never-auto-set link to an Item, rather than being pushed straight
-into Item like Unicommerce's plain catalogue import).
+Product/listing IMPORT: pull Flipkart's existing listings into Alaiy OS.
+Each SKU becomes an Item (the catalog record, get-or-create on item_code =
+SKU) AND a `Flipkart Listing` (the per-channel record: price/tax/status/
+stock per location) linked to that Item -- same relationship as the Shopify
+connector's Item <-> Shopify Product Listing, not the Amazon SP-API
+connector's standalone-listing pattern this originally copied.
 
 Two-step pull, per Flipkart's documented API shape:
   1. POST /sellers/listings/v3/search -- paginated (batch of 500), returns
@@ -106,6 +107,29 @@ def _chunk(seq, size):
         yield seq[i:i + size]
 
 
+def _get_or_create_item(sku_id, title):
+    """
+    Products live in Item, same as every other connector -- Flipkart Listing
+    is the per-channel record linked to it (mirrors Shopify Product Listing's
+    item Link), not a standalone catalog of its own. sku_id is used as
+    item_code, same convention Flipkart Listing already uses for its own
+    autoname.
+    """
+    if frappe.db.exists("Item", sku_id):
+        return sku_id
+    item = frappe.get_doc({
+        "doctype": "Item",
+        "item_code": sku_id,
+        "item_name": (title or sku_id)[:140],
+        "item_group": frappe.db.get_single_value("Stock Settings", "item_group") or "All Item Groups",
+        "stock_uom": frappe.db.get_single_value("Stock Settings", "stock_uom") or "Nos",
+        "sync_to_flipkart": 1,
+    })
+    item.flags.ignore_permissions = True
+    item.insert(ignore_permissions=True)
+    return item.item_code
+
+
 def _upsert_from_detail(sku_id, detail, search_hint=None):
     """
     detail is one value from the /details response's "available" map --
@@ -116,8 +140,11 @@ def _upsert_from_detail(sku_id, detail, search_hint=None):
     """
     price = detail.get("price") or {}
     tax = detail.get("tax") or {}
+    title = detail.get("product_title")
 
     values = {
+        "title": title,
+        "product": _get_or_create_item(sku_id, title),
         "listing_id": detail.get("listing_id") or (search_hint[0] if search_hint else None),
         "fsn": detail.get("product_id") or (search_hint[1] if search_hint else None),
         "listing_status": detail.get("listing_status"),

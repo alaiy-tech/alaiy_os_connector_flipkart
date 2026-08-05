@@ -40,6 +40,19 @@ alaiy_os_sidebar_log_items = [
     }
 ]
 
+# Extra rows under this connector's own top-level sidebar section (Dashboard
+# is always added automatically by alaiy_os) -- same hook Shopify uses for
+# its "Listings" row.
+alaiy_os_sidebar_connector_items = [
+    {
+        "connector_id": "flipkart",
+        "link_type": "DocType",
+        "link_to": "Flipkart Listing",
+        "label": "Listings",
+        "icon": "list",
+    },
+]
+
 # ---------------------------------------------------------------------------
 # Scheduler
 # ---------------------------------------------------------------------------
