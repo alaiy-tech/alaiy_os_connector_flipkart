@@ -98,26 +98,25 @@
       "label": "Alaiy OS Defaults"
     },
     {
+      "description": "Not read by any sync logic yet (order/inventory push isn't built) -- placeholder for when it is. Not required so auth-only testing isn't blocked on ERPNext-side setup unrelated to Flipkart.",
       "fieldname": "flipkart_company",
       "fieldtype": "Link",
       "label": "Company",
-      "options": "Company",
-      "reqd": 1
+      "options": "Company"
     },
     {
-      "description": "Default warehouse for stock synced through this connector.",
+      "description": "Default warehouse for stock synced through this connector. Not read by any sync logic yet.",
       "fieldname": "flipkart_default_warehouse",
       "fieldtype": "Link",
       "label": "Default Warehouse",
-      "options": "Warehouse",
-      "reqd": 1
+      "options": "Warehouse"
     },
     {
+      "description": "Not read by any sync logic yet.",
       "fieldname": "flipkart_price_list",
       "fieldtype": "Link",
       "label": "Price List",
-      "options": "Price List",
-      "reqd": 1
+      "options": "Price List"
     },
     {
       "fieldname": "sb_schedule",
@@ -130,8 +129,7 @@
       "fieldname": "flipkart_pull_sync_interval",
       "fieldtype": "Select",
       "label": "Pull Sync Interval",
-      "options": "Disabled\n5 min\n15 min\n30 min\n60 min",
-      "reqd": 1
+      "options": "Disabled\n5 min\n15 min\n30 min\n60 min"
     },
     {
       "default": "Disabled",
@@ -139,8 +137,7 @@
       "fieldname": "flipkart_push_sync_interval",
       "fieldtype": "Select",
       "label": "Push Sync Interval",
-      "options": "Disabled\n5 min\n15 min\n30 min\n60 min",
-      "reqd": 1
+      "options": "Disabled\n5 min\n15 min\n30 min\n60 min"
     }
   ],
   "is_single": 1,
