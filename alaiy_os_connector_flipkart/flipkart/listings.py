@@ -16,15 +16,32 @@ Two-step pull, per Flipkart's documented API shape:
 Known, documented gaps carried over from research (do not silently paper
 over these -- they're real ambiguities in Flipkart's own docs, not
 assumptions made here):
-  * No field literally named "fsn" appears in any response schema. We store
-    the response's `product_id` into our own `fsn` field as the most likely
-    candidate, but Flipkart's docs never state that equivalence -- flagged
-    on the doctype field itself too.
+  * FSN confirmed: Flipkart's own glossary (overview.html) states a Product
+    is identified by its FSN and is distinct from a Listing -- and a real
+    seller-dashboard export shown live confirms FSN is populated even when
+    SKU ID is "Not-Available", i.e. FSN is assigned at the catalog/product
+    level independent of any seller SKU. `product_id` remains the field we
+    map it from (no endpoint literally names an `fsn` field), but the
+    concept itself is now confirmed, not just inferred from naming.
+  * UNVERIFIED PATH PREFIX: this doc mirror (fk-api-platform-docs, given to
+    us) consistently uses "/sellers/listings/v3/*" across every endpoint
+    page, read verbatim from the raw HTML, not paraphrased -- that's what
+    SEARCH_PATH/DETAILS_PATH below match. Flipkart's separate live seller
+    dashboard reference (seller.flipkart.com/api-docs/listing-api-docs)
+    appears to use "/listings/v3/*" without that prefix instead, fetched
+    externally (lower confidence -- that fetch goes through a summarizing
+    step, unlike reading our local mirror directly). The two sources
+    disagree and neither has been confirmed against a real sandbox call.
+    VERIFY THIS FIRST against sandbox before any production traffic.
   * The search endpoint's own schema table types `listings` as a single
     object even though the endpoint description says "batch of 500" --
     handled defensively below (accept dict OR list).
   * No documented "no more pages" signal beyond `has_more: false` -- trusted
     as the sole termination condition.
+  * No category/attribute/brand fields exist in ANY endpoint response in
+    either doc source (confirmed by full-text search across the whole
+    local mirror) -- Flipkart's glossary describes brand/category as
+    belonging to the "Product" entity, but no API here exposes or sets it.
 """
 
 import json

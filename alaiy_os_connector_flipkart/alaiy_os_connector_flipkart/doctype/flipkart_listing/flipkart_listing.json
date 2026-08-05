@@ -59,11 +59,11 @@
       "label": "Listing ID"
     },
     {
-      "description": "Stored from the API's 'product_id' field. Flipkart's docs describe listing search as returning \"FSN and SKU\" but never name a literal 'fsn' field in any response schema -- product_id is the most likely candidate (FSN = product-level id, distinct from the per-seller listing_id) but this equivalence is NOT explicitly confirmed by Flipkart's docs. Treat as provisional until confirmed.",
+      "description": "Stored from the API's 'product_id' field. Confirmed by Flipkart's own glossary (a Product -- distinct from a Listing -- is identified by its FSN) and by a real seller-dashboard export showing FSN populated even when SKU ID is 'Not-Available', i.e. FSN is a catalog/product-level id independent of any seller SKU. No API response literally names a field 'fsn', but product_id is confirmed to be that same concept.",
       "fieldname": "fsn",
       "fieldtype": "Data",
       "in_list_view": 1,
-      "label": "FSN (from product_id, unconfirmed)"
+      "label": "FSN"
     },
     {
       "description": "Optional link to the corresponding Alaiy OS Item. Never auto-set by the pull import (same as Amazon Listing) -- a listing stands alone until explicitly linked.",
