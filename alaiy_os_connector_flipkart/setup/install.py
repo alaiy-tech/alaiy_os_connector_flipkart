@@ -137,6 +137,23 @@ def setup_custom_fields():
     ]
 
     _ensure_custom_fields("Item", item_fields)
+
+    # flipkart_shipment_id is the dedup key for order import (not built yet --
+    # order/shipment API shape still needs the same docs-verification pass
+    # listings got before real sync logic is written). Added now so the field
+    # exists ahead of that work, same as Unicommerce's order-code fields.
+    sales_order_fields = [
+        {
+            "fieldname": "flipkart_shipment_id",
+            "label": "Flipkart Shipment ID",
+            "fieldtype": "Data",
+            "read_only": 1,
+            "search_index": 1,
+            "insert_after": "title",
+            "description": "Flipkart's shipment identifier for this order — used to avoid re-importing the same order twice.",
+        },
+    ]
+    _ensure_custom_fields("Sales Order", sales_order_fields)
     frappe.db.commit()
 
 
