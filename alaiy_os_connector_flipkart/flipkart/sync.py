@@ -79,8 +79,7 @@ def run_order_pull(trigger="scheduled", log_name=None):
 
 
 def run_push_sync(trigger="scheduled", log_name=None):
-    """Push Alaiy OS listings/inventory out to Flipkart. TODO: implement."""
-    def worker(log):
-        pass
-
-    _run("push", trigger, log_name, worker)
+    """Push price/inventory for every linked Flipkart Listing. Gated on
+    flipkart_enable_push_sync -- see listings_push.py's own guard."""
+    from alaiy_os_connector_flipkart.flipkart.listings_push import run_push_sync as _run_push_sync
+    _run_push_sync(trigger=trigger, log_name=log_name)

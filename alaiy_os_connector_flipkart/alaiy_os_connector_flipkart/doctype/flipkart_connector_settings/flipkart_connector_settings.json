@@ -22,7 +22,9 @@
     "flipkart_price_list",
     "sb_schedule",
     "flipkart_pull_sync_interval",
-    "flipkart_push_sync_interval"
+    "flipkart_push_sync_interval",
+    "sb_push",
+    "flipkart_enable_push_sync"
   ],
   "fields": [
     {
@@ -138,6 +140,18 @@
       "fieldtype": "Select",
       "label": "Push Sync Interval",
       "options": "Disabled\n5 min\n15 min\n30 min\n60 min"
+    },
+    {
+      "fieldname": "sb_push",
+      "fieldtype": "Section Break",
+      "label": "Two-Way Sync (Push to Flipkart)"
+    },
+    {
+      "default": "0",
+      "description": "Master switch for every outbound write to Flipkart: price updates, inventory updates, listing updates, and listing creation (POST /sellers/listings/v3/update/price, /update/inventory, /update, and the bare v3 create endpoint). Off by default -- these are real changes to a live marketplace listing, not a safe-to-retry read. Checked by both the scheduler (sync_jobs.py) and the manual 'Push' trigger (api/sync.py) before anything is sent; is_enabled alone is NOT enough to allow a push.",
+      "fieldname": "flipkart_enable_push_sync",
+      "fieldtype": "Check",
+      "label": "Enable Two-Way Sync (Push)"
     }
   ],
   "is_single": 1,

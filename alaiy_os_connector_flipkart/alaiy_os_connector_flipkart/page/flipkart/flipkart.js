@@ -65,7 +65,6 @@ frappe.pages["flipkart"].on_page_load = function (wrapper) {
 						</div>
 					</div>
 					<div class="flipkart-card-body">
-						<p class="flipkart-text-muted">Import-only for now -- pushing price/inventory updates back to Flipkart is not implemented yet.</p>
 						<button id="import-products-btn" class="flipkart-btn flipkart-btn-primary">
 							<i class="fa fa-cloud-download"></i> Import Products from Flipkart
 						</button>
@@ -73,6 +72,35 @@ frappe.pages["flipkart"].on_page_load = function (wrapper) {
 							Manage Listings
 						</button>
 						<div id="listings-log" class="flipkart-sync-log"></div>
+					</div>
+				</div>
+
+				<!-- Two-Way Sync -->
+				<div class="flipkart-card">
+					<div class="flipkart-card-header">
+						<span class="flipkart-icon-badge"><i class="fa fa-exchange"></i></span>
+						<div class="flipkart-card-header-text">
+							<h5>Two-Way Sync</h5>
+							<p>Push local changes back out to Flipkart. Off by default -- these are real writes to a live listing.</p>
+						</div>
+					</div>
+					<div class="flipkart-card-body">
+						<label style="display:flex; align-items:center; gap:10px; cursor:pointer; margin-bottom:14px;">
+							<input type="checkbox" id="push-sync-toggle" style="width:16px; height:16px;">
+							<span>Enable Two-Way Sync (Push)</span>
+						</label>
+						<p class="flipkart-text-muted">What this covers, and what it doesn't:</p>
+						<div class="flipkart-info-strip">
+							<span class="flipkart-info-pill"><i class="fa fa-check-circle"></i> Price updates</span>
+							<span class="flipkart-info-pill"><i class="fa fa-check-circle"></i> Inventory updates</span>
+							<span class="flipkart-info-pill"><i class="fa fa-times-circle"></i> Full listing update</span>
+							<span class="flipkart-info-pill"><i class="fa fa-times-circle"></i> Create new listing</span>
+						</div>
+						<p class="flipkart-text-muted">Pushes price + inventory for every Flipkart Listing linked to an Item, using whatever's currently stored on that listing's own record. Only "Update Price" and "Update Inventory" are implemented -- "Update Listing" (title/tax/shipping/fulfilment) and "Create Listing" are not.</p>
+						<button id="push-sync-btn" class="flipkart-btn flipkart-btn-primary" disabled>
+							<i class="fa fa-cloud-upload"></i> Push Price &amp; Inventory to Flipkart
+						</button>
+						<div id="push-log" class="flipkart-sync-log"></div>
 					</div>
 				</div>
 
@@ -186,6 +214,62 @@ frappe.pages["flipkart"].on_page_load = function (wrapper) {
 		);
 	}
 
+	function push_sync() {
+		run_job(
+			'alaiy_os_connector_flipkart.api.sync.trigger_push_sync',
+			{},
+			document.getElementById('push-log'),
+			document.getElementById('push-sync-btn'),
+			function(r) {
+				if (r.message && r.message.queued === false) {
+					document.getElementById('push-log').innerHTML =
+						'<div class="flipkart-log-entry flipkart-alert-warning">' + (r.message.message || 'Push sync is disabled.') + '</div>';
+					document.getElementById('push-log').classList.add('flipkart-active');
+				}
+			}
+		);
+	}
+
+	function load_push_sync_toggle() {
+		frappe.call({
+			method: 'alaiy_os_connector_flipkart.api.sync.get_push_sync_status',
+			callback: function(r) {
+				var enabled = !!(r.message && r.message.enabled);
+				document.getElementById('push-sync-toggle').checked = enabled;
+				document.getElementById('push-sync-btn').disabled = !enabled;
+			}
+		});
+	}
+
+	function on_push_sync_toggle_change() {
+		var checkbox = document.getElementById('push-sync-toggle');
+		var enabled = checkbox.checked;
+		var confirm_and_set = function() {
+			frappe.call({
+				method: 'alaiy_os_connector_flipkart.api.sync.set_push_sync_enabled',
+				args: { enabled: enabled ? 1 : 0 },
+				callback: function(r) {
+					var actually_enabled = !!(r.message && r.message.enabled);
+					checkbox.checked = actually_enabled;
+					document.getElementById('push-sync-btn').disabled = !actually_enabled;
+				},
+				error: function() {
+					checkbox.checked = !enabled;
+				}
+			});
+		};
+
+		if (enabled) {
+			frappe.confirm(
+				'This allows the connector to push price and inventory changes to your live Flipkart listings. Continue?',
+				confirm_and_set,
+				function() { checkbox.checked = false; }
+			);
+		} else {
+			confirm_and_set();
+		}
+	}
+
 	function escape_html(value) {
 		return String(value || '')
 			.replace(/&/g, '&amp;')
@@ -271,9 +355,12 @@ frappe.pages["flipkart"].on_page_load = function (wrapper) {
 	check_connection();
 	load_stats();
 	refresh_logs();
+	load_push_sync_toggle();
 
 	document.getElementById('import-orders-btn').addEventListener('click', import_orders);
 	document.getElementById('import-products-btn').addEventListener('click', import_products);
+	document.getElementById('push-sync-btn').addEventListener('click', push_sync);
+	document.getElementById('push-sync-toggle').addEventListener('change', on_push_sync_toggle_change);
 	document.getElementById('manage-listings-btn').addEventListener('click', function() {
 		frappe.set_route('List', 'Flipkart Listing');
 	});

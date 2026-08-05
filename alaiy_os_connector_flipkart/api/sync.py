@@ -27,7 +27,13 @@ def trigger_pull_sync():
 
 @frappe.whitelist()
 def trigger_push_sync():
-    """Manually enqueue a 'push' sync (Alaiy OS → Flipkart)."""
+    """Manually enqueue a 'push' sync (Alaiy OS → Flipkart). Refuses up
+    front if two-way sync is disabled, rather than queuing a job that
+    would just skip itself -- clearer feedback for the page's button."""
+    settings = frappe.get_single("Flipkart Connector Settings")
+    if not settings.flipkart_enable_push_sync:
+        return {"queued": False, "message": "Two-way sync (push) is disabled in Flipkart Connector Settings."}
+
     log = get_or_create_log("push", "manual")
     frappe.enqueue(
         "alaiy_os_connector_flipkart.flipkart.sync.run_push_sync",
@@ -95,6 +101,24 @@ def get_sync_status(sync_type=None):
         order_by="started_at desc",
         limit=10,
     )
+
+
+@frappe.whitelist()
+def get_push_sync_status():
+    return {"enabled": bool(frappe.db.get_single_value("Flipkart Connector Settings", "flipkart_enable_push_sync"))}
+
+
+@frappe.whitelist()
+def set_push_sync_enabled(enabled):
+    """Whitelisted so the page's toggle doesn't need System Manager access
+    to the full settings form just to flip one switch."""
+    frappe.only_for("System Manager")
+    frappe.db.set_single_value(
+        "Flipkart Connector Settings", "flipkart_enable_push_sync",
+        1 if frappe.utils.cint(enabled) else 0,
+    )
+    frappe.db.commit()
+    return {"enabled": bool(frappe.utils.cint(enabled))}
 
 
 @frappe.whitelist()
