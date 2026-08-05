@@ -8,15 +8,15 @@ up as "queued" immediately, then enqueue the real work on the long queue.
 
 import frappe
 
-from alaiy_os_connector_template.template.sync import get_or_create_log
+from alaiy_os_connector_flipkart.flipkart.sync import get_or_create_log
 
 
 @frappe.whitelist()
 def trigger_pull_sync():
-    """Manually enqueue a 'pull' sync (external → Alaiy OS)."""
+    """Manually enqueue a 'pull' sync (Flipkart → Alaiy OS)."""
     log = get_or_create_log("pull", "manual")
     frappe.enqueue(
-        "alaiy_os_connector_template.template.sync.run_pull_sync",
+        "alaiy_os_connector_flipkart.flipkart.sync.run_pull_sync",
         queue="long",
         timeout=600,
         trigger="manual",
@@ -27,10 +27,10 @@ def trigger_pull_sync():
 
 @frappe.whitelist()
 def trigger_push_sync():
-    """Manually enqueue a 'push' sync (Alaiy OS → external)."""
+    """Manually enqueue a 'push' sync (Alaiy OS → Flipkart)."""
     log = get_or_create_log("push", "manual")
     frappe.enqueue(
-        "alaiy_os_connector_template.template.sync.run_push_sync",
+        "alaiy_os_connector_flipkart.flipkart.sync.run_push_sync",
         queue="long",
         timeout=600,
         trigger="manual",
@@ -42,7 +42,7 @@ def trigger_push_sync():
 @frappe.whitelist()
 def get_sync_status(sync_type=None):
     """
-    Return the most recent Template Sync Log rows, newest first.
+    Return the most recent Flipkart Sync Log rows, newest first.
 
     The Alaiy OS connector card passes the registry slot name ("categories"
     or "items"); map those to this connector's own sync_type values.
@@ -52,7 +52,7 @@ def get_sync_status(sync_type=None):
         type_map = {"categories": "pull", "items": "push"}
         filters["sync_type"] = type_map.get(sync_type, sync_type)
     return frappe.get_all(
-        "Template Sync Log",
+        "Flipkart Sync Log",
         filters=filters,
         fields=[
             "name", "sync_type", "trigger", "status",
