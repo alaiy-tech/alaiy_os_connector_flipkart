@@ -1,7 +1,7 @@
-app_name = "alaiy_os_connector_template"
-app_title = "Alaiy Os Connector Template"
+app_name = "alaiy_os_connector_flipkart"
+app_title = "Alaiy Os Connector Flipkart"
 app_publisher = "Alaiy"
-app_description = "Connector Template for AlaiyOS"
+app_description = "Flipkart Marketplace connector for AlaiyOS"
 app_email = "mail@alaiy.com"
 app_license = "agpl-3.0"
 
@@ -19,11 +19,11 @@ required_apps = ["alaiy_os", "erpnext"]
 # `bench migrate`. sync_connector_registry() (re)registers this connector in
 # alaiy_os's OS Connector Registry and is idempotent, so it is safe on migrate.
 after_install = [
-    "alaiy_os_connector_template.setup.install.after_install"
+    "alaiy_os_connector_flipkart.setup.install.after_install"
 ]
 
 after_migrate = [
-    "alaiy_os_connector_template.setup.install.sync_connector_registry"
+    "alaiy_os_connector_flipkart.setup.install.sync_connector_registry"
 ]
 
 # ---------------------------------------------------------------------------
@@ -34,21 +34,34 @@ after_migrate = [
 alaiy_os_sidebar_log_items = [
     {
         "link_type": "DocType",
-        "link_to": "Template Sync Log",
-        "label": "Template Logs",
+        "link_to": "Flipkart Sync Log",
+        "label": "Flipkart Logs",
         "icon": "activity",
     }
+]
+
+# Extra rows under this connector's own top-level sidebar section (Dashboard
+# is always added automatically by alaiy_os) -- same hook Shopify uses for
+# its "Listings" row.
+alaiy_os_sidebar_connector_items = [
+    {
+        "connector_id": "flipkart",
+        "link_type": "DocType",
+        "link_to": "Flipkart Listing",
+        "label": "Listings",
+        "icon": "list",
+    },
 ]
 
 # ---------------------------------------------------------------------------
 # Scheduler
 # ---------------------------------------------------------------------------
 # Runs every minute; check_and_enqueue() decides whether any sync is actually
-# due based on the intervals configured in Template Connector Settings.
+# due based on the intervals configured in Flipkart Connector Settings.
 scheduler_events = {
     "cron": {
         "* * * * *": [
-            "alaiy_os_connector_template.template.sync_jobs.check_and_enqueue"
+            "alaiy_os_connector_flipkart.flipkart.sync_jobs.check_and_enqueue"
         ]
     }
 }
@@ -58,11 +71,11 @@ scheduler_events = {
 # ---------------------------------------------------------------------------
 # doc_events = {
 # 	"Item": {
-# 		"after_insert": "alaiy_os_connector_template.template.sync.on_item_change",
-# 		"on_update": "alaiy_os_connector_template.template.sync.on_item_change",
+# 		"after_insert": "alaiy_os_connector_flipkart.flipkart.sync.on_item_change",
+# 		"on_update": "alaiy_os_connector_flipkart.flipkart.sync.on_item_change",
 # 	},
 # 	"Sales Order": {
-# 		"on_submit": "alaiy_os_connector_template.template.sync.on_sales_order_submit",
+# 		"on_submit": "alaiy_os_connector_flipkart.flipkart.sync.on_sales_order_submit",
 # 	},
 # }
 

@@ -1,0 +1,182 @@
+{
+  "creation": "2026-07-20 00:00:00.000000",
+  "docstatus": 0,
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "is_enabled",
+    "sb_connection",
+    "flipkart_use_sandbox",
+    "flipkart_app_id",
+    "flipkart_app_secret",
+    "cb_connection",
+    "flipkart_access_token",
+    "flipkart_token_expires_at",
+    "sb_webhooks",
+    "flipkart_notification_url",
+    "flipkart_seller_id",
+    "sb_defaults",
+    "flipkart_company",
+    "flipkart_default_warehouse",
+    "flipkart_price_list",
+    "sb_schedule",
+    "flipkart_pull_sync_interval",
+    "flipkart_push_sync_interval",
+    "sb_push",
+    "flipkart_enable_push_sync"
+  ],
+  "fields": [
+    {
+      "default": "0",
+      "fieldname": "is_enabled",
+      "fieldtype": "Check",
+      "label": "Enable Flipkart"
+    },
+    {
+      "fieldname": "sb_connection",
+      "fieldtype": "Section Break",
+      "label": "API Connection"
+    },
+    {
+      "default": "1",
+      "description": "Use the Flipkart sandbox environment (sandbox-api.flipkart.net) instead of production (api.flipkart.net).",
+      "fieldname": "flipkart_use_sandbox",
+      "fieldtype": "Check",
+      "label": "Use Sandbox"
+    },
+    {
+      "description": "Application ID (client ID) issued when the app was registered with Flipkart.",
+      "fieldname": "flipkart_app_id",
+      "fieldtype": "Data",
+      "in_list_view": 1,
+      "label": "App ID",
+      "reqd": 1
+    },
+    {
+      "description": "Application Secret (client secret) issued alongside the App ID. Used for Basic Auth when requesting an access token — never sent directly to any other endpoint.",
+      "fieldname": "flipkart_app_secret",
+      "fieldtype": "Password",
+      "label": "App Secret",
+      "reqd": 1
+    },
+    {
+      "fieldname": "cb_connection",
+      "fieldtype": "Column Break"
+    },
+    {
+      "description": "Cached OAuth2 access token from the last successful client_credentials exchange. Read-only — refreshed automatically before it expires.",
+      "fieldname": "flipkart_access_token",
+      "fieldtype": "Password",
+      "label": "Access Token (cached)",
+      "read_only": 1
+    },
+    {
+      "fieldname": "flipkart_token_expires_at",
+      "fieldtype": "Datetime",
+      "label": "Token Expires At",
+      "read_only": 1
+    },
+    {
+      "fieldname": "sb_webhooks",
+      "fieldtype": "Section Break",
+      "label": "Webhooks (Order/Return Notifications)"
+    },
+    {
+      "description": "The exact HTTPS URL registered with Flipkart for order/return notifications (e.g. https://yourdomain.com/api/method/alaiy_os_connector_flipkart.flipkart.webhooks.receive_notification). Must match byte-for-byte, since it's part of the inbound signature calculation — Flipkart signs each notification with SHA1(timestamp + this URL + method + App Secret), and verification recomputes the same hash.",
+      "fieldname": "flipkart_notification_url",
+      "fieldtype": "Data",
+      "label": "Notification URL"
+    },
+    {
+      "description": "Seller identifier assigned by Flipkart — required for the notification enable/disable API, and included in some payloads.",
+      "fieldname": "flipkart_seller_id",
+      "fieldtype": "Data",
+      "label": "Seller ID"
+    },
+    {
+      "fieldname": "sb_defaults",
+      "fieldtype": "Section Break",
+      "label": "Alaiy OS Defaults"
+    },
+    {
+      "description": "Not read by any sync logic yet (order/inventory push isn't built) -- placeholder for when it is. Not required so auth-only testing isn't blocked on ERPNext-side setup unrelated to Flipkart.",
+      "fieldname": "flipkart_company",
+      "fieldtype": "Link",
+      "label": "Company",
+      "options": "Company"
+    },
+    {
+      "description": "Default warehouse for stock synced through this connector. Not read by any sync logic yet.",
+      "fieldname": "flipkart_default_warehouse",
+      "fieldtype": "Link",
+      "label": "Default Warehouse",
+      "options": "Warehouse"
+    },
+    {
+      "description": "Not read by any sync logic yet.",
+      "fieldname": "flipkart_price_list",
+      "fieldtype": "Link",
+      "label": "Price List",
+      "options": "Price List"
+    },
+    {
+      "fieldname": "sb_schedule",
+      "fieldtype": "Section Break",
+      "label": "Sync Schedule"
+    },
+    {
+      "default": "Disabled",
+      "description": "How often to automatically run the pull sync (Flipkart → Alaiy OS).",
+      "fieldname": "flipkart_pull_sync_interval",
+      "fieldtype": "Select",
+      "label": "Pull Sync Interval",
+      "options": "Disabled\n5 min\n15 min\n30 min\n60 min"
+    },
+    {
+      "default": "Disabled",
+      "description": "How often to automatically run the push sync (Alaiy OS → Flipkart).",
+      "fieldname": "flipkart_push_sync_interval",
+      "fieldtype": "Select",
+      "label": "Push Sync Interval",
+      "options": "Disabled\n5 min\n15 min\n30 min\n60 min"
+    },
+    {
+      "fieldname": "sb_push",
+      "fieldtype": "Section Break",
+      "label": "Two-Way Sync (Push to Flipkart)"
+    },
+    {
+      "default": "0",
+      "description": "Master switch for every outbound write to Flipkart: price updates, inventory updates, listing updates, and listing creation (POST /sellers/listings/v3/update/price, /update/inventory, /update, and the bare v3 create endpoint). Off by default -- these are real changes to a live marketplace listing, not a safe-to-retry read. Checked by both the scheduler (sync_jobs.py) and the manual 'Push' trigger (api/sync.py) before anything is sent; is_enabled alone is NOT enough to allow a push.",
+      "fieldname": "flipkart_enable_push_sync",
+      "fieldtype": "Check",
+      "label": "Enable Two-Way Sync (Push)"
+    }
+  ],
+  "is_single": 1,
+  "links": [],
+  "modified": "2026-08-05 00:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "Alaiy Os Connector Flipkart",
+  "name": "Flipkart Connector Settings",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": [],
+  "track_changes": 0
+}

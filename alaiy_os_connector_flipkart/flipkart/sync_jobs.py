@@ -2,7 +2,7 @@
 # For license information, please see license.txt
 """
 Scheduler entry point. hooks.py runs check_and_enqueue() every minute; it
-reads the configured intervals from Template Connector Settings and enqueues
+reads the configured intervals from Flipkart Connector Settings and enqueues
 a background job per sync type only when one is actually due.
 """
 
@@ -22,23 +22,27 @@ _STALE_RUNNING_SECONDS = 1800
 
 
 def check_and_enqueue():
-    if not frappe.db.exists("DocType", "Template Sync Log"):
+    if not frappe.db.exists("DocType", "Flipkart Sync Log"):
         return
 
-    settings = frappe.get_single("Template Connector Settings")
+    settings = frappe.get_single("Flipkart Connector Settings")
     if not settings.is_enabled:
         return
 
     _maybe_enqueue(
-        interval_setting=settings.template_pull_sync_interval or "Disabled",
+        interval_setting=settings.flipkart_pull_sync_interval or "Disabled",
         sync_type="pull",
-        enqueue_fn="alaiy_os_connector_template.template.sync.run_pull_sync",
+        enqueue_fn="alaiy_os_connector_flipkart.flipkart.sync.run_pull_sync",
     )
-    _maybe_enqueue(
-        interval_setting=settings.template_push_sync_interval or "Disabled",
-        sync_type="push",
-        enqueue_fn="alaiy_os_connector_template.template.sync.run_push_sync",
-    )
+    # Two-way sync (push) has its own master switch on top of the interval --
+    # a real write to a live marketplace listing, not a safe-to-retry read,
+    # so the interval alone being non-"Disabled" isn't reason enough to fire.
+    if settings.flipkart_enable_push_sync:
+        _maybe_enqueue(
+            interval_setting=settings.flipkart_push_sync_interval or "Disabled",
+            sync_type="push",
+            enqueue_fn="alaiy_os_connector_flipkart.flipkart.sync.run_push_sync",
+        )
 
 
 def _maybe_enqueue(interval_setting, sync_type, enqueue_fn):
@@ -50,7 +54,7 @@ def _maybe_enqueue(interval_setting, sync_type, enqueue_fn):
 
     # Skip if a (non-stale) job is already running for this sync type.
     running = frappe.db.get_value(
-        "Template Sync Log",
+        "Flipkart Sync Log",
         {"sync_type": sync_type, "status": "running"},
         "started_at",
         order_by="started_at desc",
@@ -60,7 +64,7 @@ def _maybe_enqueue(interval_setting, sync_type, enqueue_fn):
 
     # Skip if the last success is still inside the configured interval.
     last_success = frappe.db.get_value(
-        "Template Sync Log",
+        "Flipkart Sync Log",
         {"sync_type": sync_type, "status": "success"},
         "started_at",
         order_by="started_at desc",

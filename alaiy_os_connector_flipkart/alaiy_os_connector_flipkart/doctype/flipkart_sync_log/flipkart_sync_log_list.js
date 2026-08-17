@@ -1,16 +1,16 @@
-const TEMPLATE_SYNC_TYPE_COLORS = {
+const FLIPKART_SYNC_TYPE_COLORS = {
 	pull: "blue",
 	push: "orange",
 	webhook: "cyan",
 };
 
-const TEMPLATE_TRIGGER_COLORS = {
+const FLIPKART_TRIGGER_COLORS = {
 	scheduled: "purple",
 	manual: "pink",
 	webhook: "cyan",
 };
 
-const TEMPLATE_STATUS_COLORS = {
+const FLIPKART_STATUS_COLORS = {
 	queued: "grey",
 	running: "blue",
 	success: "green",
@@ -26,17 +26,17 @@ function alaiy_pill(value, colors) {
 	</span>`;
 }
 
-frappe.listview_settings["Template Sync Log"] = {
+frappe.listview_settings["Flipkart Sync Log"] = {
 	get_indicator(doc) {
 		return [
 			__(doc.status),
-			TEMPLATE_STATUS_COLORS[doc.status] || "darkgrey",
+			FLIPKART_STATUS_COLORS[doc.status] || "darkgrey",
 			`status,=,${doc.status}`,
 		];
 	},
 	formatters: {
-		sync_type: (value) => alaiy_pill(value, TEMPLATE_SYNC_TYPE_COLORS),
-		trigger: (value) => alaiy_pill(value, TEMPLATE_TRIGGER_COLORS),
-		status: (value) => alaiy_pill(value, TEMPLATE_STATUS_COLORS),
+		sync_type: (value) => alaiy_pill(value, FLIPKART_SYNC_TYPE_COLORS),
+		trigger: (value) => alaiy_pill(value, FLIPKART_TRIGGER_COLORS),
+		status: (value) => alaiy_pill(value, FLIPKART_STATUS_COLORS),
 	},
 };

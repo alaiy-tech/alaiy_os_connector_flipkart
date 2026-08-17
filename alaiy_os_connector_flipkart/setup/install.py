@@ -25,7 +25,7 @@ def after_install():
     'Failed to decrypt key' error on first load.
     """
     frappe.db.set_single_value(
-        "Template Connector Settings", "template_api_token", ""
+        "Flipkart Connector Settings", "flipkart_app_secret", ""
     )
     frappe.db.commit()
 
@@ -40,7 +40,7 @@ def sync_connector_registry():
     if not frappe.db.exists("DocType", "OS Connector Registry"):
         return
 
-    from alaiy_os_connector_template.connector_meta import connector_meta
+    from alaiy_os_connector_flipkart.connector_meta import connector_meta
 
     connector_id = connector_meta["connector_id"]
 
@@ -85,7 +85,7 @@ def _update_alaiy_os_sidebar():
         frappe.db.commit()
     except Exception:
         frappe.log_error(
-            title="Template connector: sidebar update failed",
+            title="Flipkart connector: sidebar update failed",
             message=frappe.get_traceback(),
         )
 
@@ -94,13 +94,21 @@ def _fix_settings_as_single():
     """
     Force issingle=1 on the settings doctype. Frappe does not auto-convert an
     existing DocType from table-based to Single via bench migrate, so patch it
-    directly every deploy.
+    directly every deploy. Same pattern as the Shopify connector's own
+    setup/install.py:_fix_settings_as_single().
+
+    frappe.db.sql() writes straight to the DB and does not clear Frappe's
+    cached DocType meta -- confirmed live (issingle=1 in the DB, but
+    frappe.get_doc() still raised DoesNotExistError until the meta cache
+    was cleared). clear_cache(doctype=...) is required after a raw SQL
+    change to tabDocType, same as the ORM does automatically on doc.save().
     """
     frappe.db.sql(
         "UPDATE `tabDocType` SET issingle=1 "
-        "WHERE name='Template Connector Settings' AND issingle=0"
+        "WHERE name='Flipkart Connector Settings' AND issingle=0"
     )
     frappe.db.commit()
+    frappe.clear_cache(doctype="Flipkart Connector Settings")
 
 
 # ---------------------------------------------------------------------------
@@ -109,29 +117,61 @@ def _fix_settings_as_single():
 def setup_custom_fields():
     """
     Add this connector's custom fields to ERPNext doctypes. Idempotent — safe
-    to call on every enable/migrate. Replace the examples below with the
-    external-id / flag fields your connector actually needs.
+    to call on every enable/migrate.
+
+    flipkart_fsn is the Flipkart Serial Number — the marketplace's own listing
+    identifier, assigned by Flipkart once a listing is created (distinct from
+    our own item_code and from any SKU we send them).
     """
     item_fields = [
         {
-            "fieldname": "template_external_id",
-            "label": "Template External ID",
+            "fieldname": "flipkart_fsn",
+            "label": "Flipkart FSN",
             "fieldtype": "Data",
+            "read_only": 1,
             "search_index": 1,
             "insert_after": "item_code",
+            "description": "Flipkart Serial Number — assigned by Flipkart once this listing is created.",
         },
         {
-            "fieldname": "sync_to_template",
-            "label": "Sync to Template",
+            "fieldname": "sync_to_flipkart",
+            "label": "Sync to Flipkart",
             "fieldtype": "Check",
             "default": "0",
             "in_list_view": 1,
             "insert_after": "disabled",
-            "description": "Include this Item in Template syncs.",
+            "description": "Include this Item in Flipkart syncs.",
         },
     ]
 
     _ensure_custom_fields("Item", item_fields)
+
+    # flipkart_shipment_id is the dedup key for order import/webhooks.
+    # flipkart_shipment_status is written by both the order pull and the
+    # webhook receiver (packed/ready_to_dispatch/shipped/delivered/cancelled)
+    # -- same field, two writers, since either one may see a given state
+    # change first depending on whether polling or the webhook fires sooner.
+    sales_order_fields = [
+        {
+            "fieldname": "flipkart_shipment_id",
+            "label": "Flipkart Shipment ID",
+            "fieldtype": "Data",
+            "read_only": 1,
+            "search_index": 1,
+            "insert_after": "title",
+            "description": "Flipkart's shipment identifier for this order — used to avoid re-importing the same order twice.",
+        },
+        {
+            "fieldname": "flipkart_shipment_status",
+            "label": "Flipkart Shipment Status",
+            "fieldtype": "Data",
+            "read_only": 1,
+            "in_list_view": 1,
+            "insert_after": "flipkart_shipment_id",
+            "description": "Latest shipment state from Flipkart (APPROVED/PACKED/READY_TO_DISPATCH/SHIPPED/DELIVERED/CANCELLED), updated by order notifications.",
+        },
+    ]
+    _ensure_custom_fields("Sales Order", sales_order_fields)
     frappe.db.commit()
 
 
@@ -155,7 +195,7 @@ def _ensure_custom_fields(doctype, fields):
         cf.in_list_view = 1 if f.get("in_list_view") else 0
         cf.default = f.get("default")
         cf.description = f.get("description", "")
-        cf.module = "Alaiy Os Connector Template"
+        cf.module = "Alaiy Os Connector Flipkart"
         cf.insert(ignore_permissions=True)
 
 

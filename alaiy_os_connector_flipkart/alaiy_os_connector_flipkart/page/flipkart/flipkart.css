@@ -1,0 +1,546 @@
+.flipkart-page {
+	padding: var(--padding-lg, 20px) 0;
+}
+
+.flipkart-container {
+	max-width: 900px;
+}
+
+.flipkart-card {
+	border: 1px solid var(--border-color);
+	border-radius: var(--border-radius-lg, 10px);
+	margin-bottom: 24px;
+	background-color: var(--card-bg, var(--fg-color));
+	box-shadow: var(--card-shadow, 0 1px 3px rgba(0, 0, 0, 0.05));
+	overflow: hidden;
+	transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.flipkart-card:hover {
+	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+	border-color: var(--dark-border-color, var(--border-color));
+}
+
+.flipkart-card-header {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	padding: 18px 22px;
+	border-bottom: 1px solid var(--border-color);
+	background-color: var(--subtle-fg, var(--fg-color));
+}
+
+.flipkart-card-header-text {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.flipkart-card-header h5 {
+	margin: 0;
+	font-size: 15px;
+	font-weight: 600;
+	color: var(--text-color);
+}
+
+.flipkart-card-header-text p {
+	margin: 0;
+	font-size: 12px;
+	color: var(--text-muted);
+}
+
+.flipkart-card-body {
+	padding: 22px;
+}
+
+.flipkart-connector-status {
+	margin-bottom: 0;
+}
+
+.flipkart-icon-badge {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 38px;
+	height: 38px;
+	border-radius: var(--border-radius, 8px);
+	font-size: 15px;
+	background-color: var(--bg-color, var(--fg-color));
+	border: 1px solid var(--border-color);
+	color: var(--text-color);
+}
+
+.flipkart-date-range {
+	display: none;
+	gap: 16px;
+	margin: 14px 0;
+}
+
+.flipkart-date-range.flipkart-active {
+	display: flex;
+}
+
+.flipkart-field-group {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.flipkart-field-group label {
+	font-size: 12px;
+	font-weight: 500;
+	color: var(--text-muted);
+}
+
+.flipkart-input {
+	padding: 6px 10px;
+	font-size: 13px;
+	border-radius: var(--border-radius, 6px);
+	border: 1px solid var(--border-color);
+	background-color: var(--control-bg, var(--fg-color));
+	color: var(--text-color);
+}
+
+.flipkart-info-strip {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin: 8px 0 12px;
+}
+
+.flipkart-info-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 3px 8px;
+	border-radius: 4px;
+	background-color: transparent;
+	color: var(--text-muted);
+	font-size: 11px;
+	font-weight: 500;
+}
+
+.flipkart-info-pill i {
+	color: var(--text-muted);
+	font-size: 10px;
+}
+
+.flipkart-sync-grid {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.flipkart-sync-box {
+	padding: 16px;
+	border: 1px solid var(--border-color);
+	border-radius: var(--border-radius, 8px);
+	background-color: var(--subtle-fg, var(--fg-color));
+}
+
+.flipkart-sync-box h6 {
+	margin: 0 0 6px 0;
+	font-weight: 600;
+	font-size: 13px;
+	color: var(--text-color);
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.flipkart-sync-box h6 i {
+	color: var(--text-muted);
+	width: 16px;
+	text-align: center;
+}
+
+.flipkart-sync-box .flipkart-text-muted {
+	color: var(--text-muted);
+	font-size: 12px;
+	margin-bottom: 12px;
+}
+
+.flipkart-sync-box .flipkart-btn {
+	margin-right: 8px;
+	margin-bottom: 8px;
+}
+
+.flipkart-btn {
+	padding: 7px 16px;
+	font-size: 13px;
+	font-weight: 500;
+	border-radius: var(--border-radius, 6px);
+	border: 1px solid var(--border-color);
+	cursor: pointer;
+	transition: all 0.15s ease;
+	background-color: var(--control-bg, var(--fg-color));
+	color: var(--text-color);
+}
+
+.flipkart-btn i {
+	margin-right: 6px;
+}
+
+.flipkart-btn:hover {
+	border-color: var(--text-muted);
+	transform: translateY(-1px);
+}
+
+.flipkart-btn:active {
+	transform: translateY(0);
+}
+
+.flipkart-btn-primary {
+	background-color: var(--primary);
+	color: var(--primary-inverse, #fff);
+	border-color: var(--primary);
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.flipkart-btn-primary:hover {
+	background-color: var(--primary-dark, var(--primary));
+	opacity: 0.92;
+}
+
+.flipkart-btn-outline-primary {
+	background-color: transparent;
+	color: var(--primary);
+	border-color: var(--primary);
+}
+
+.flipkart-btn-outline-primary:hover {
+	background-color: var(--primary-selected, rgba(0, 122, 204, 0.08));
+}
+
+.flipkart-btn-outline-secondary {
+	background-color: transparent;
+	color: var(--text-muted);
+	border-color: var(--border-color);
+}
+
+.flipkart-btn-outline-secondary:hover {
+	background-color: var(--subtle-fg, var(--fg-color));
+}
+
+.flipkart-btn-danger {
+	background-color: var(--red-500, #d9534f);
+	color: #fff;
+	border-color: var(--red-500, #d9534f);
+}
+
+.flipkart-btn-danger:hover {
+	opacity: 0.9;
+}
+
+.flipkart-btn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.flipkart-alert-warning {
+	background-color: var(--yellow-100, #fcf8e3);
+	border: 1px solid var(--yellow-300, #faebcc);
+	color: var(--yellow-700, #8a6d3b);
+	padding: 8px 12px;
+	border-radius: var(--border-radius, 6px);
+}
+
+.flipkart-alert-warning.flipkart-alert-sm {
+	font-size: 12px;
+	padding: 6px 10px;
+}
+
+.flipkart-sync-log {
+	margin-top: 10px;
+	padding: 10px 12px;
+	background-color: var(--subtle-fg, var(--fg-color));
+	border-radius: var(--border-radius, 6px);
+	font-size: 12px;
+	min-height: 40px;
+	max-height: 150px;
+	overflow-y: auto;
+	border: 1px solid var(--border-color);
+	display: none;
+}
+
+.flipkart-sync-log.flipkart-active {
+	display: block;
+}
+
+.flipkart-sync-log .flipkart-log-entry {
+	margin: 3px 0;
+	padding: 3px 0;
+	border-bottom: 1px solid var(--border-color);
+	color: var(--text-color);
+}
+
+.flipkart-sync-log .flipkart-log-entry:last-child {
+	border-bottom: none;
+}
+
+.flipkart-sync-log .flipkart-log-status {
+	font-weight: 600;
+	padding: 3px 8px;
+	border-radius: 12px;
+	display: inline-block;
+	margin-bottom: 6px;
+	font-size: 11px;
+}
+
+.flipkart-log-status-success {
+	background-color: var(--green-100, #d4edda);
+	color: var(--green-700, #155724);
+}
+
+.flipkart-log-status-running {
+	background-color: var(--blue-100, #d1ecf1);
+	color: var(--blue-700, #0c5460);
+}
+
+.flipkart-log-status-failed {
+	background-color: var(--red-100, #f8d7da);
+	color: var(--red-700, #721c24);
+}
+
+.flipkart-log-status-queued {
+	background-color: var(--gray-200, #e2e3e5);
+	color: var(--gray-700, #383d41);
+}
+
+.flipkart-logs-container {
+	overflow-x: auto;
+}
+
+.flipkart-logs-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 13px;
+}
+
+.flipkart-logs-table th {
+	background-color: var(--subtle-fg, var(--fg-color));
+	color: var(--text-muted);
+	padding: 10px;
+	text-align: left;
+	border-bottom: 1px solid var(--border-color);
+	font-weight: 600;
+	font-size: 12px;
+	text-transform: uppercase;
+	letter-spacing: 0.02em;
+}
+
+.flipkart-logs-table td {
+	padding: 10px;
+	border-bottom: 1px solid var(--border-color);
+	color: var(--text-color);
+	vertical-align: top;
+}
+
+.flipkart-logs-table tr:hover td {
+	background-color: var(--subtle-fg, var(--fg-color));
+}
+
+.flipkart-log-link {
+	color: var(--primary);
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.flipkart-log-link:hover {
+	text-decoration: underline;
+}
+
+.flipkart-logs-table .indicator-pill {
+	display: inline-flex;
+	align-items: center;
+	max-width: 100%;
+}
+
+.flipkart-text-muted {
+	color: var(--text-muted);
+}
+
+.flipkart-badge {
+	padding: 3px 8px;
+	border-radius: 12px;
+	font-size: 11px;
+	font-weight: 600;
+}
+
+.flipkart-badge-success {
+	background-color: var(--green-100, #d4edda);
+	color: var(--green-700, #155724);
+}
+
+.flipkart-badge-danger {
+	background-color: var(--red-100, #f8d7da);
+	color: var(--red-700, #721c24);
+}
+
+.flipkart-badge-warning {
+	background-color: var(--yellow-100, #fff3cd);
+	color: var(--yellow-700, #856404);
+}
+
+.flipkart-badge-secondary {
+	background-color: var(--gray-200, #e2e3e5);
+	color: var(--gray-700, #383d41);
+}
+
+.flipkart-badge-info {
+	background-color: var(--blue-100, #d1ecf1);
+	color: var(--blue-700, #0c5460);
+}
+
+.flipkart-import-mode {
+	display: flex;
+	gap: 8px;
+	margin-bottom: 4px;
+}
+
+.flipkart-mode-btn {
+	flex: 1;
+	padding: 8px 14px;
+	font-size: 13px;
+	font-weight: 500;
+	border-radius: var(--border-radius, 6px);
+	border: 1px solid var(--border-color);
+	background-color: var(--control-bg, var(--fg-color));
+	color: var(--text-muted);
+	cursor: pointer;
+	transition: all 0.15s ease;
+}
+
+.flipkart-mode-btn i {
+	margin-right: 6px;
+}
+
+.flipkart-mode-btn:hover {
+	border-color: var(--text-muted);
+	color: var(--text-color);
+}
+
+.flipkart-mode-btn.flipkart-mode-active {
+	background-color: var(--primary-selected, rgba(0, 122, 204, 0.08));
+	color: var(--primary);
+	border-color: var(--primary);
+}
+
+.flipkart-spinner {
+	display: inline-block;
+	width: 12px;
+	height: 12px;
+	margin-left: 6px;
+	border: 2px solid var(--border-color);
+	border-top: 2px solid var(--primary);
+	border-radius: 50%;
+	animation: flipkart-spin 0.8s linear infinite;
+	vertical-align: middle;
+}
+
+@keyframes flipkart-spin {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+}
+
+.flipkart-stat-group-title {
+	font-size: 11px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: var(--text-muted);
+	margin: 28px 0 12px;
+	padding-top: 16px;
+	border-top: 1px dashed var(--border-color);
+}
+
+.flipkart-stat-group-title:first-child {
+	margin-top: 0;
+	padding-top: 0;
+	border-top: none;
+}
+
+.flipkart-stats-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+	gap: 10px;
+}
+
+.flipkart-stat-tile {
+	position: relative;
+	border: 1px solid var(--border-color);
+	border-radius: var(--border-radius-md, 8px);
+	padding: 16px 14px 14px;
+	text-align: left;
+	background-color: var(--fg-color);
+	overflow: hidden;
+	transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.flipkart-stat-tile:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+}
+
+.flipkart-stat-clickable {
+	cursor: pointer;
+}
+
+.flipkart-stat-tile::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 3px;
+}
+
+.flipkart-stat-accent-local::before {
+	background-color: var(--blue-500, #2490ef);
+}
+
+.flipkart-stat-accent-flipkart::before {
+	background-color: var(--green-500, #29a745);
+}
+
+.flipkart-stat-value {
+	font-size: 24px;
+	font-weight: 700;
+	line-height: 1.2;
+	color: var(--text-color);
+}
+
+.flipkart-stat-label {
+	font-size: 12px;
+	color: var(--text-muted);
+	margin-top: 4px;
+	line-height: 1.3;
+}
+
+.flipkart-stat-skeleton::before {
+	background-color: var(--border-color);
+}
+
+.flipkart-skeleton-bar {
+	border-radius: 4px;
+	background: linear-gradient(90deg, var(--border-color) 25%, var(--subtle-fg, var(--fg-color)) 50%, var(--border-color) 75%);
+	background-size: 200% 100%;
+	animation: flipkart-shimmer 1.4s ease-in-out infinite;
+}
+
+.flipkart-skeleton-value {
+	width: 50%;
+	height: 24px;
+}
+
+.flipkart-skeleton-label {
+	width: 75%;
+	height: 12px;
+	margin-top: 8px;
+}
+
+@keyframes flipkart-shimmer {
+	0% { background-position: 200% 0; }
+	100% { background-position: -200% 0; }
+}
